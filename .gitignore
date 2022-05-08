@@ -1,0 +1,7 @@
+manage.py
+venv/
+blog_srv/
+.idea
+blog_app/migrations
+blog_app/__init__.py
+blog_app/__pycache__/
