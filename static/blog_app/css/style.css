@@ -1,0 +1,4 @@
+.container{overflow:hidden;width:100%}
+.box{white-space:nowrap}
+.menu{width:150px;display:inline-block;border:1px solid black}
+.content{width:100%;display:inline-block;border:1px solid black}
