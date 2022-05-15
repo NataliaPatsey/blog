@@ -1,7 +1,14 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from blog_app.models import Article, Category
 
 # Create your views here.
+
+
+def index(request):
+    data = Category.objects.all()
+    return render(request, 'blog_app/base.html',{'data': data})
+
 
 def based_page2(request):
     return render(request, 'blog_app/page2.html')
@@ -18,8 +25,7 @@ def static_page(request):
     return render(request, 'blog_app/page1.html')
 
 
-def index(request):
-    return HttpResponse('<h2>Главная</h2>')
+
 
 
 def page(request):
