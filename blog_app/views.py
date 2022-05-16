@@ -9,6 +9,12 @@ def index(request):
     data = Category.objects.all()
     return render(request, 'blog_app/base.html',{'data': data})
 
+def all_articles(request):
+    data =Article.objects.all()
+    return render(request, 'blog_app/all_articles.html',{'data': data})
+
+
+
 
 def based_page2(request):
     return render(request, 'blog_app/page2.html')
