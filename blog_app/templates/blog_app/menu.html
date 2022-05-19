@@ -1,0 +1,5 @@
+    <a class="p-2 text-muted" href="{% url 'get_item_all' %}">ALL ARTICLES</a>
+         {% for el in menu %}
+              <a class="p-2 text-muted" href="{% url 'get_item_category' el.id %}">{{ el.short_name }}</a>
+          {% endfor %}
+    <a class="p-2 text-muted" href="{% url 'contact' %}">CONTACTS</a>
