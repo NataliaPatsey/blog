@@ -21,7 +21,7 @@
   {% for art in data %}
     <div class="blog-post">
       <h2 class="blog-post-title">{{ art.title }}</h2>
-      <p class="blog-post-meta">{{ art.date }} by <a href="#">Mark</a></p>
+      <p class="blog-post-meta">{{ art.date }} by <a href="#">{{ art.user }}</a></p>
       <p>[ edited {{ art.edit_count  }} times ]</p>
       <p>{{ art.summary  }}</p>
     <hr>
@@ -29,4 +29,3 @@
   {% endfor %}
 {% endblock %}
 
-git

@@ -4,7 +4,6 @@ from blog_app.models import Article, Category
 
 # Create your views here.
 
-
 def index(request):
     menu = Category.objects.all()
     return render(request, 'blog_app/welcome.html',{'menu': menu})
@@ -26,7 +25,23 @@ def get_item_category(request, id):
     data = Article.objects.filter(category_id=id)
     return render(request, 'blog_app/get_item_category.html',{'data': data,'category': category, 'menu': menu})
 
+def get_my_items(request):
+    menu = Category.objects.all()
+    data = Article.objects.filter(user=request.user)
+    category = {'short_name': 'My articles', 'about':'You can edit or remote it'}
+    return render(request, 'blog_app/get_item_category.html', {'data': data, 'category': category, 'menu': menu})
+
+
+def get_item_one(request, id):
+    pass
 
 def page(request):
     return HttpResponse('<h2>Страница с текстом</h2>')
+
+
+
+
+
+
+
 

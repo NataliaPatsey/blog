@@ -17,6 +17,7 @@ class Article(models.Model):
     date = models.DateField(default=datetime.date.today)
     summary = models.CharField(max_length=200)
     text = models.TextField(max_length=1000)
+    user = models.ForeignKey('auth.User', default=1, on_delete=models.CASCADE, verbose_name='user')
 
     def __str__(self):
         return self.title
