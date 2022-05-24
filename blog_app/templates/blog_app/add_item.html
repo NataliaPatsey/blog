@@ -1,10 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'blog_app/base.html' %}
+
+{% block menu %}
+    <a class="p-2 text-muted" href="{% url 'get_item_all' %}">ALL ARTICLES</a>
+         {% for el in menu %}
+              <a class="p-2 text-muted" href="{% url 'get_item_category' el.id %}">{{ el.short_name }}</a>
+          {% endfor %}
+    <a class="p-2 text-muted" href="{% url 'contact' %}">CONTACTS</a>
+{% endblock menu %}
+
+{% block title %}
+    <h3 class="pb-3 mb-4 font-italic border-bottom">
+            Add Article
+    </h3>
+{% endblock %}
+
+{% block content %}
+{% if msg == 'ok' %}
+    <h3>Saved!</h3>
+{% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>Type title : {{ form.title }}</p>
+        <p>Select category: {{ form.category }}</p>
+        <p><span style="vertical-align: top;">Type text : </span>{{ form.text }}</p>
+        <p>Type summary : {{ form.summary }}</p>
+        <button class="btn btn-primary my-4" type="submit">Submit</button>
+    </form>
+
+{% endblock %}
+
+
+
+
+
+
