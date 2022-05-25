@@ -15,6 +15,7 @@ class LogoutView(View):
         logout(request)
         return redirect('index')
 
+
 class LoginFormView(FormView):
     form_class = AuthenticationForm
     template_name = "blog_app/login.html"
@@ -55,6 +56,7 @@ def index(request):
     menu = Category.objects.all()
     return render(request, 'blog_app/welcome.html',{'menu': menu})
 
+
 def contact(request):
     menu = Category.objects.all()
     return render(request, 'blog_app/contact.html',{'menu': menu})
@@ -79,9 +81,11 @@ def get_my_items(request):
     return render(request, 'blog_app/get_item_category.html', {'data': data, 'category': category, 'menu': menu})
 
 
-
 def get_item_one(request, id):
-    pass
+    menu = Category.objects.all()
+    data = Article.objects.get(id=id)
+    return render(request, 'blog_app/get_item_category.html', {'data': data, 'menu': menu})
+
 
 def page(request):
     return HttpResponse('<h2>Страница с текстом</h2>')
