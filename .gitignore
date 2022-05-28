@@ -1,3 +1,4 @@
+.gitignore
 manage.py
 venv/
 blog_srv/

@@ -84,7 +84,26 @@ def get_my_items(request):
 def get_item_one(request, id):
     menu = Category.objects.all()
     data = Article.objects.get(id=id)
-    return render(request, 'blog_app/get_item_category.html', {'data': data, 'menu': menu})
+    return render(request, 'blog_app/get_item_one.html', {'data': data, 'menu': menu})
+
+
+def update_item(request, id):
+    menu = Category.objects.all()
+    obj = Article.objects.get(id=id)
+    form = ArticleForm(instance=obj)
+
+    if request.method == 'POST':
+        category = Category.objects.get(id=request.POST['category'])
+        Article.objects.filter(id=id).update(text=request.POST['text'],title=request.POST['title'],
+                                         summary=request.POST['summary'],category=category,edit_count=+1)
+        return redirect('get_item_one',id)
+
+    return render(request, 'blog_app/update_item.html', {'form': form, 'menu': menu})
+
+def delete_item(request, id):
+    Article.objects.get(id=id).delete()
+    return redirect('get_my_items')
+
 
 
 def page(request):
