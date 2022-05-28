@@ -1,0 +1,20 @@
+{% extends 'blog_app/base.html' %}
+
+{% block title %}
+Registration Page
+{% endblock %}
+
+{% block content %}
+<h3 class="pb-4 mb-4 fst-italic border-bottom">
+        Registration</h3>
+<div class="text-center">
+        <div class="form-signin" style="float: left; width: 300px;">
+            <form method="post">
+              {% csrf_token %}
+              {{ form.as_p }}
+              <button type="submit">Registration</button>
+            </form>
+        </div>
+
+    </div>
+{% endblock %}
