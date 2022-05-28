@@ -6,26 +6,28 @@
               <a class="p-2 text-muted" href="{% url 'get_item_category' el.id %}">{{ el.short_name }}</a>
           {% endfor %}
     <a class="p-2 text-muted" href="{% url 'contact' %}">CONTACTS</a>
-{% endblock %}
+{% endblock menu %}
 
 {% block title %}
     <h3 class="pb-3 mb-4 font-italic border-bottom">
-      {{ category.short_name }}
-        <p>
-            {{ category.about }}
-        </p>
+            Add Article
     </h3>
 {% endblock %}
 
 {% block content %}
-  {% for art in data %}
-    <div class="blog-post">
-      <h2 class="blog-post-title">{{ art.title }}</h2>
-      <p class="blog-post-meta">{{ art.date }} by <a href="#">{{ art.user }}</a></p>
-      <p>[ edited {{ art.edit_count  }} times ]</p>
-      <p>{{ art.summary  }}<a href="{% url 'get_item_one' art.id %}">read more....</a></p>
-    <hr>
-  </div><!-- /.blog-post -->
-  {% endfor %}
+   <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>Type title : {{ form.title }}</p>
+        <p>Select category: {{ form.category }}</p>
+        <p>Type summary : {{ form.summary }}</p>
+        <p><span style="vertical-align: top;">Type text : </span>{{ form.text }}</p>
+        <button class="btn btn-primary my-4" type="submit">Edit</button>
+    </form>
+
 {% endblock %}
+
+
+
+
+
 
