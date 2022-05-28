@@ -6,26 +6,25 @@ from blog_app.models import Article, Category
 
 
 def index(request):
-    data = Category.objects.all()
-    return render(request, 'blog_app/base.html',{'data': data})
+    menu = Category.objects.all()
+    return render(request, 'blog_app/welcome.html',{'menu': menu})
+
+def contact(request):
+    menu = Category.objects.all()
+    return render(request, 'blog_app/contact.html',{'menu': menu})
 
 
-def based_page2(request):
-    return render(request, 'blog_app/page2.html')
+def get_item_all(request):
+    menu = data = Category.objects.all()
+    data =Article.objects.all()
+    return render(request, 'blog_app/get_item_all.html',{'data': data, 'menu': menu})
 
 
-def based_page3(request):
-    data = dict()
-    data['tel'] = '+ 375-29-1234567'
-    data['address'] = 'Minsk, Mir, 1'
-    return render(request, 'blog_app/page3.html', {'data': data})
-
-
-def static_page(request):
-    return render(request, 'blog_app/page1.html')
-
-
-
+def get_item_category(request, id):
+    menu = Category.objects.all()
+    category = Category.objects.get(pk=id)
+    data = Article.objects.filter(category_id=id)
+    return render(request, 'blog_app/get_item_category.html',{'data': data,'category': category, 'menu': menu})
 
 
 def page(request):

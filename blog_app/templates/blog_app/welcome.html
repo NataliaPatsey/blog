@@ -1,0 +1,20 @@
+{% extends 'blog_app/base.html' %}
+{% block menu %}
+    <a class="p-2 text-muted" href="{% url 'get_item_all' %}">ALL ARTICLES</a>
+         {% for el in menu %}
+              <a class="p-2 text-muted" href="{% url 'get_item_category' el.id %}">{{ el.short_name }}</a>
+          {% endfor %}
+    <a class="p-2 text-muted" href="{% url 'contact' %}">CONTACTS</a>
+{% endblock %}
+
+{% block title %}
+    <h3 class="pb-3 mb-4 font-italic border-bottom">
+            Welcome
+    </h3>
+{% endblock %}
+
+{% block content %}
+    <h3>
+        News, guids, practices
+    </h3>
+{% endblock %}

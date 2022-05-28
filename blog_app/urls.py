@@ -1,10 +1,9 @@
-from blog_app.views import index, page, static_page, based_page2, based_page3
+from blog_app.views import index, contact,get_item_category, get_item_all
 from django.urls import path, include
 
 urlpatterns = [
     path('', index),
-    path('page/', page),
-    path('page1/', static_page, name='static_page'),
-    path('page2/', based_page2, name='based_page2'),
-    path('page3/', based_page3, name='based_page3'),
+    path('contact/', contact, name='contact'),
+    path('all/', get_item_all, name='get_item_all'),
+    path('category/<int:id>/', get_item_category, name='get_item_category'),
 ]
