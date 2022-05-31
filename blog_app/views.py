@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from blog_app.models import Article, Category
-from blog_app.forms import ArticleForm
+from blog_app.forms import ArticleForm, SearchForm
 ##
 from django.views.generic.edit import FormView
 from django.contrib.auth import login, logout
@@ -9,6 +9,36 @@ from django.contrib.auth.forms import UserCreationForm,  AuthenticationForm
 from django.views.generic.base import View
 
 # Create your views here.
+
+def search(request):
+    tform=ArticleForm()
+    menu = Category.objects.all()
+    form = SearchForm()
+    data = []
+    if request.method == 'POST':
+        if request.POST['where'] == '1' and request.POST['count'] == '0':
+            data = Article.objects.filter(title__icontains=request.POST['searchtext'])
+        elif request.POST['where'] == '2' and request.POST['count'] == '0':
+            data = Article.objects.filter(summary__icontains=request.POST['searchtext'])
+        elif request.POST['where'] == '0' and request.POST['count'] == '1':
+            data = Article.objects.filter(edit_count__gt=int(request.POST['count_edit']))
+        elif request.POST['where'] == '0' and request.POST['count'] == '2':
+            data = Article.objects.filter(edit_count__lt=int(request.POST['count_edit']))
+        elif request.POST['where'] == '1' and request.POST['count'] == '2':
+            data = Article.objects.filter(title__icontains=request.POST['searchtext'],edit_count__lt=int(request.POST['count_edit']))
+        elif request.POST['where'] == '2' and request.POST['count'] == '2':
+            data = Article.objects.filter(summary__icontains=request.POST['searchtext'],edit_count__lt=int(request.POST['count_edit']))
+        elif request.POST['where'] == '1' and request.POST['count'] == '1':
+            data = Article.objects.filter(title__icontains=request.POST['searchtext'],edit_count__gt=int(request.POST['count_edit']))
+        elif request.POST['where'] == '2' and request.POST['count'] == '1':
+            data = Article.objects.filter(summary__icontains=request.POST['searchtext'],edit_count__gt=int(request.POST['count_edit']))
+    return render(request, 'blog_app/search.html', {'form': form, 'menu': menu, 'data':data})
+
+
+
+
+
+
 
 class LogoutView(View):
     def get(self, request):
@@ -41,6 +71,7 @@ def add_item(request):
     menu = Category.objects.all()
     form = ArticleForm()
     msg = ''
+
     if request.method == 'POST':
         category = Category.objects.get(id = request.POST['category'])
         article = Article.objects.create(text=request.POST['text'],title=request.POST['title'],
@@ -100,9 +131,11 @@ def update_item(request, id):
 
     return render(request, 'blog_app/update_item.html', {'form': form, 'menu': menu})
 
+
 def delete_item(request, id):
     Article.objects.get(id=id).delete()
     return redirect('get_my_items')
+
 
 
 

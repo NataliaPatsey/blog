@@ -1,0 +1,47 @@
+{% extends 'blog_app/base.html' %}
+
+
+{% block menu %}
+    <a class="p-2 text-muted" href="{% url 'get_item_all' %}">ALL ARTICLES</a>
+         {% for el in menu %}
+              <a class="p-2 text-muted" href="{% url 'get_item_category' el.id %}">{{ el.short_name }}</a>
+          {% endfor %}
+    <a class="p-2 text-muted" href="{% url 'contact' %}">CONTACTS</a>
+{% endblock menu %}
+
+{% block title %}
+    <h3 class="pb-3 mb-4 font-italic border-bottom">
+            Search Article
+    </h3>
+{% endblock %}
+{% block content %}
+   <form method="post" enctype="multipart/form-data">
+       {% csrf_token %}
+       <p><span style="vertical-align: top;">  Serch text : </span>{{ form.searchtext }}
+           <span style="vertical-align: top;">Where  : </span>{{ form.where }}</p>
+       <p><span style="vertical-align: top;"> Edited : </span>{{ form.count }}{{ form.count_edit }}</p>
+
+        <button class="btn btn-primary my-4" type="submit">Search</button>
+    </form>
+{% if data %}
+    <h3 class="pb-3 mb-4 font-italic border-bottom">
+            Search Result
+    </h3>
+    {% for art in data %}
+        <div class="blog-post">
+            <h2 class="blog-post-title">{{ art.title }}</h2>
+            <p class="blog-post-meta">{{ art.date }} by <a href="#">{{ art.user }}</a></p>
+            <p class="blog-post-meta">was edit {{ art.edit_count }} times</p>
+            <p>{{ art.summary  }} <a href="{% url 'get_item_one' art.id %}">read more....</a></p>
+            <hr>
+        </div>
+    {% endfor %}
+{% endif %}
+
+{% endblock %}
+
+
+
+
+
+
