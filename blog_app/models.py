@@ -18,6 +18,7 @@ class Article(models.Model):
     summary = models.CharField(max_length=200)
     text = models.TextField(max_length=1000)
     user = models.ForeignKey('auth.User', default=1, on_delete=models.CASCADE, verbose_name='user')
+    image = models.ImageField(upload_to='static/blog_app/img/')
 
     def __str__(self):
         return self.title

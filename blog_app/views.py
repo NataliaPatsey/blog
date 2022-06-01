@@ -11,7 +11,6 @@ from django.views.generic.base import View
 # Create your views here.
 
 def search(request):
-    tform=ArticleForm()
     menu = Category.objects.all()
     form = SearchForm()
     data = []
