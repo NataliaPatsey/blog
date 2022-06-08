@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from blog_app.models import Article, Category
-from blog_app.forms import ArticleForm, SearchForm
+from blog_app.models import Article, Category,Likemark
+from blog_app.forms import ArticleForm, SearchForm, LikemarkForm
 ##
 from django.views.generic.edit import FormView
 from django.contrib.auth import login, logout
@@ -32,11 +32,6 @@ def search(request):
         elif request.POST['where'] == '2' and request.POST['count'] == '1':
             data = Article.objects.filter(summary__icontains=request.POST['searchtext'],edit_count__gt=int(request.POST['count_edit']))
     return render(request, 'blog_app/search.html', {'form': form, 'menu': menu, 'data':data})
-
-
-
-
-
 
 
 class LogoutView(View):
@@ -72,11 +67,14 @@ def add_item(request):
     msg = ''
 
     if request.method == 'POST':
-        category = Category.objects.get(id = request.POST['category'])
-        article = Article.objects.create(text=request.POST['text'],title=request.POST['title'],
-                                         summary=request.POST['summary'],category=category,
-                                         user=request.user)
-        article.save()
+        #category = Category.objects.get(id = request.POST['category'])
+        #article = Article.objects.create(text=request.POST['text'],title=request.POST['title'],
+        #                                 summary=request.POST['summary'],category=category,
+        #                                 user=request.user)
+        #article.save()
+        form = ArticleForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
         msg = 'ok'
 
     return render(request, 'blog_app/add_item.html', {'form': form, 'menu': menu, 'msg': msg})
@@ -114,8 +112,36 @@ def get_my_items(request):
 def get_item_one(request, id):
     menu = Category.objects.all()
     data = Article.objects.get(id=id)
-    return render(request, 'blog_app/get_item_one.html', {'data': data, 'menu': menu})
+    form = LikemarkForm()
+    return render(request, 'blog_app/get_item_one.html', {'data': data, 'menu': menu,'form':form})
 
+def like(request,id):
+    if request.method == 'POST':
+        article = Article.objects.get(id=id)
+        if Likemark.objects.filter(user =request.user,article=article).exists():
+            Likemark.objects.filter(user =request.user,article=article).update(mark=int(request.POST['mark']))
+        else:
+            obj = Likemark.objects.create(user =request.user,mark=int(request.POST['mark']),article=article)
+            obj.save()
+    return redirect('get_item_one',id)
+
+def unlike(request,id):
+    if request.method == 'POST':
+        article = Article.objects.get(id=id)
+        if Likemark.objects.filter(user =request.user,article=article).exists():
+            Likemark.objects.filter(user =request.user,article=article).delete()
+
+    return redirect('get_item_one',id)
+
+def dislike(request,id):
+    if request.method == 'POST':
+        article = Article.objects.get(id=id)
+        if Likemark.objects.filter(user =request.user,article=article).exists():
+            Likemark.objects.filter(user =request.user,article=article).update(mark=0)
+        else:
+            obj = Likemark.objects.create(user=request.user, mark=0, article=article)
+            obj.save()
+    return redirect('get_item_one',id)
 
 def update_item(request, id):
     menu = Category.objects.all()
@@ -123,9 +149,14 @@ def update_item(request, id):
     form = ArticleForm(instance=obj)
 
     if request.method == 'POST':
-        category = Category.objects.get(id=request.POST['category'])
-        Article.objects.filter(id=id).update(text=request.POST['text'],title=request.POST['title'],
-                                         summary=request.POST['summary'],category=category,edit_count=+1)
+        #category = Category.objects.get(id=request.POST['category'])
+        #Article.objects.filter(id=id).update(text=request.POST['text'],title=request.POST['title'],
+        #                                 summary=request.POST['summary'],category=category,
+        #                                 edit_count=obj.edit_count+1)
+        form = ArticleForm(request.POST, request.FILES, instance=obj)
+        if form.is_valid():
+            form.save()
+            Article.objects.filter(id=id).update(edit_count = 1+obj.edit_count)
         return redirect('get_item_one',id)
 
     return render(request, 'blog_app/update_item.html', {'form': form, 'menu': menu})

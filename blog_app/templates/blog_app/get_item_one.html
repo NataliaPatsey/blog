@@ -17,11 +17,37 @@
 {% block content %}
     <div class="blog-post">
       <p class="blog-post-meta">{{ data.date }} by <a href="#">{{ data.user }}</a></p>
-      <p class="blog-post-meta">{{ data.summary }}</p>
+      <img src="{{ data.image.url }}" class="img-responsive" style="width: 100%; float: left; margin-right: 10px;" />
+      <p class="blog-post-meta">{{ data.summary }} Edited {{ data.edit_count }} </p>
       <p>{{ data.text }}</p>
-      {% if data.user == request.user %}
-        <p><a href="{% url 'update_item' data.id %}">edit >>></a>&nbsp;<a href="{% url 'delete_item' data.id %}">delete >>></a></p>
-      {% endif %}
+      <p>AVG MARK: {{ data.mark_avg }}</p>
+      <p>COUNT of MARKS: {{ data.mark_count }}</p>
+
+        {% if request.user.is_authenticated%}
+        <div style="display: inline-block">
+        <form method="POST" action="{% url 'like' data.id %}">
+                {% csrf_token %}
+                {{ form }}
+                 <button class="btn btn-primary my-4" type="submit">Like</button>
+            </form>
+        </div>
+        <div style="display: inline-block">
+           <form method="POST" action="{% url 'unlike' data.id %}">
+                {% csrf_token %}
+                 <button class="btn btn-primary my-4" type="submit">Unlike</button>
+            </form>
+        </div>
+        <div style="display: inline-block">
+            <form method="POST" action="{% url 'dislike' data.id %}">
+                {% csrf_token %}
+                 <button class="btn btn-primary my-4" type="submit">Dislike</button>
+            </form>
+            </div>
+        {% endif %}
+
+        {% if data.user == request.user %}
+            <p><a href="{% url 'update_item' data.id %}">edit >>></a>&nbsp;<a href="{% url 'delete_item' data.id %}">delete >>></a></p>
+        {% endif %}
       <hr>
   </div><!-- /.blog-post -->
 {% endblock %}
