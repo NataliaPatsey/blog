@@ -24,6 +24,7 @@
       <p class="blog-post-meta">{{ art.date }} by <a href="#">{{ art.user }}</a></p>
       <p>[ edited {{ art.edit_count  }} times ]</p>
       <p>{{ art.summary  }}<a href="{% url 'get_item_one' art.id %}">read more....</a></p>
+      <p><a href="{% url 'add_to_list' art.id %}">Read later....</a></p>
     <hr>
   </div><!-- /.blog-post -->
   {% endfor %}

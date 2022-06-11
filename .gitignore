@@ -6,3 +6,4 @@ blog_srv/
 blog_app/migrations
 blog_app/__init__.py
 blog_app/__pycache__/
+static/blog_app/img

@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from blog_app.models import Article, Category,Likemark
+from blog_app.models import Article, Category,Likemark,List,Read
 from blog_app.forms import ArticleForm, SearchForm, LikemarkForm
 ##
 from django.views.generic.edit import FormView
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm,  AuthenticationForm
 from django.views.generic.base import View
+
+from django.db.models import Count
 
 # Create your views here.
 
@@ -165,6 +167,57 @@ def update_item(request, id):
 def delete_item(request, id):
     Article.objects.get(id=id).delete()
     return redirect('get_my_items')
+
+def add_to_list(request, id):
+    article = Article.objects.get(id=id)
+    if List.objects.filter(user=request.user,article=article,read__isnull=True).exists():
+        obj = List.objects.get(user=request.user,article=article,read__isnull=True)
+        obj.count = obj.count + 1
+        obj.save()
+    else:
+        obj = List.objects.create(user=request.user,article=article)
+        obj.save()
+    return_path = request.META.get('HTTP_REFERER', '/')
+    return redirect(return_path)
+
+
+def delete_from_list(request, id):
+    article = Article.objects.get(id=id)
+    obj = List.objects.get(user=request.user,article=article,read__isnull=True)
+    if obj.count > 1:
+        obj.count = obj.count - 1
+        obj.save()
+    else:
+        List.objects.get(user=request.user,article=article,read__isnull=True).delete()
+    return_path = request.META.get('HTTP_REFERER', '/')
+    return redirect(return_path)
+
+
+def drop_from_list(request, id):
+    article = Article.objects.get(id=id)
+    List.objects.get(user=request.user,article=article,read__isnull=True).delete()
+    return_path = request.META.get('HTTP_REFERER', '/')
+    return redirect(return_path)
+
+
+def do_list(request):
+    read = Read.objects.create()
+    List.objects.filter(user=request.user,read__isnull=True).update(read=read)
+    return_path = request.META.get('HTTP_REFERER', '/')
+    return redirect(return_path)
+
+def get_past_list(request, id):
+    menu = Category.objects.all()
+    pastlist = Read.objects.get(id=id)
+    data = List.objects.filter(read=pastlist)
+    return render(request, 'blog_app/get_past_list.html', {'data': data, 'menu': menu})
+
+
+def get_my_lists(request):
+    menu = Category.objects.all()
+    current= List.objects.filter(user=request.user,read__isnull=True)
+    data = List.objects.filter(user=request.user,read__isnull=False).values('read').annotate(total=Count('id'))
+    return render(request, 'blog_app/get_my_lists.html', {'data': data, 'menu': menu,'current': current})
 
 
 

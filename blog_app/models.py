@@ -44,4 +44,18 @@ class Likemark(models.Model):
     mark = models.PositiveSmallIntegerField(default=5)
 
 
+# фиксируем закрытие списка (аналог чека/заказа)
+class Read(models.Model):
+    state = models.BooleanField(default=True)
+# # набираем список избранное
+class List(models.Model):
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, verbose_name='user')
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    read = models.ForeignKey(Read, on_delete=models.CASCADE, null=True)
+    count = models.PositiveSmallIntegerField(default=1)
+
+
+
+
+
 
