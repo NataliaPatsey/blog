@@ -1,7 +1,12 @@
 from django.forms import ModelForm
 from django import forms
-from blog_app.models import Article, Likemark
+from blog_app.models import Article, Likemark, Category
 
+
+class CategoryForm(ModelForm):
+    class Meta:
+        model = Category
+        fields = ['short_name', 'about']
 
 class ArticleForm(ModelForm):
     class Meta:

@@ -1,12 +1,16 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from blog_app.models import Article, Category,Likemark,List,Read
-from blog_app.forms import ArticleForm, SearchForm, LikemarkForm
+from blog_app.forms import ArticleForm, SearchForm, LikemarkForm, CategoryForm
 ##
 from django.views.generic.edit import FormView
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm,  AuthenticationForm
 from django.views.generic.base import View
+
+from django.contrib.auth.models import Group,User
+from django.contrib.auth.decorators import login_required, permission_required
+
 
 from django.db.models import Count
 
@@ -46,6 +50,7 @@ class LoginFormView(FormView):
     form_class = AuthenticationForm
     template_name = "blog_app/login.html"
     success_url = "/"
+
 
     def form_valid(self, form):
         self.user=form.get_user()
@@ -168,6 +173,7 @@ def delete_item(request, id):
     Article.objects.get(id=id).delete()
     return redirect('get_my_items')
 
+
 def add_to_list(request, id):
     article = Article.objects.get(id=id)
     if List.objects.filter(user=request.user,article=article,read__isnull=True).exists():
@@ -206,6 +212,7 @@ def do_list(request):
     return_path = request.META.get('HTTP_REFERER', '/')
     return redirect(return_path)
 
+
 def get_past_list(request, id):
     menu = Category.objects.all()
     pastlist = Read.objects.get(id=id)
@@ -220,10 +227,75 @@ def get_my_lists(request):
     return render(request, 'blog_app/get_my_lists.html', {'data': data, 'menu': menu,'current': current})
 
 
+def adm_get_group(request):
+    group_lst = Group.objects.all()
+    return render(request, 'blog_app/adm_get_group.html', {'group_lst': group_lst})
 
 
-def page(request):
-    return HttpResponse('<h2>Страница с текстом</h2>')
+def adm_compound_group(request, id):
+    group = Group.objects.get(id=id)
+    user_dellst = list()
+    user_addlst = list()
+    for user in User.objects.all():
+        if user.groups.filter(name=group.name).exists():
+            user_dellst.append(user)
+        else:
+            user_addlst.append(user)
+    return render(request, 'blog_app/adm_compound_group.html', {'group': group,
+                                                                'user_dellst': user_dellst,
+                                                                'user_addlst': user_addlst})
+
+
+@login_required
+@permission_required('auth.group.can_change_group',raise_exception=True)
+def adm_add_to_group(request,group_id,user_id):
+    group = Group.objects.get(id=group_id)
+    user = User.objects.get(id=user_id)
+    group.user_set.add(user)
+    return_path = request.META.get('HTTP_REFERER', '/')
+    return redirect(return_path)
+
+
+def adm_del_from_group(request,group_id,user_id):
+    group = Group.objects.get(id=group_id)
+    user = User.objects.get(id=user_id)
+    group.user_set.remove(user)
+    return_path = request.META.get('HTTP_REFERER', '/')
+    return redirect(return_path)
+
+def adm_get_category(request):
+    data = Category.objects.all()
+    return render(request, 'blog_app/adm_get_category.html', {'data': data})
+
+
+def adm_del_category(request, id):
+    Category.objects.get(id=id).delete()
+    return redirect('adm_get_category')
+
+
+def adm_edit_category(request,id):
+    category = Category.objects.get(id=id)
+    form = CategoryForm(instance=category)
+    msg = ''
+    if request.method == 'POST':
+        form = CategoryForm(request.POST,instance=category)
+        if form.is_valid():
+            form.save()
+            return redirect('adm_get_category')
+    return render(request, 'blog_app/adm_edit_category.html', {'form': form})
+
+
+def adm_add_category(request):
+    form = CategoryForm()
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('adm_get_category')
+    return render(request, 'blog_app/adm_edit_category.html', {'form': form})
+
+
+
 
 
 

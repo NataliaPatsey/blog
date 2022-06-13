@@ -1,7 +1,8 @@
 from blog_app.views import index, contact,get_item_category,get_item_all,\
     get_my_items, get_item_one,add_item,RegisterFormView, LoginFormView,LogoutView, update_item,\
     delete_item, search,like,dislike,unlike, add_to_list,get_my_lists,delete_from_list,drop_from_list,do_list,\
-    get_past_list
+    get_past_list, adm_get_group,adm_compound_group,adm_add_to_group,adm_del_from_group,adm_edit_category,\
+    adm_get_category, adm_del_category,adm_add_category
 
 from django.urls import path
 
@@ -27,8 +28,25 @@ urlpatterns = [
     path('getpastlist/<int:id>', get_past_list, name='get_past_list'),
     path('getmylists/', get_my_lists, name='get_my_lists'),
 
+    path('admingroup', adm_get_group,name='adm_get_group'),
+    path('admincompoundgroup/<int:id>', adm_compound_group,name='adm_compound_group'),
+    path('admaddtogroup/<int:group_id>/<int:user_id>', adm_add_to_group,name='adm_add_to_group'),
+    path('admdelfromgroup/<int:group_id>/<int:user_id>', adm_del_from_group,name='adm_del_from_group'),
+
+    path('getcategory/', adm_get_category, name='adm_get_category'),
+    path('editcategory/<int:id>', adm_edit_category, name='adm_edit_category'),
+    path('delcategory/<int:id>', adm_del_category, name='adm_del_category'),
+    path('addcategory/', adm_add_category, name='adm_add_category'),
+
     path('registration/', RegisterFormView.as_view(), name='registration'),
     path('login/', LoginFormView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
+
 ]
+
+
+
+
+
+
 
