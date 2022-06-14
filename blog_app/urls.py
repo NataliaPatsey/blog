@@ -2,11 +2,12 @@ from blog_app.views import index, contact,get_item_category,get_item_all,\
     get_my_items, get_item_one,add_item,RegisterFormView, LoginFormView,LogoutView, update_item,\
     delete_item, search,like,dislike,unlike, add_to_list,get_my_lists,delete_from_list,drop_from_list,do_list,\
     get_past_list, adm_get_group,adm_compound_group,adm_add_to_group,adm_del_from_group,adm_edit_category,\
-    adm_get_category, adm_del_category,adm_add_category
+    adm_get_category, adm_del_category,adm_add_category,setcookie
 
 from django.urls import path
 
 urlpatterns = [
+    path('setcookie', setcookie, name='setcookie'),
     path('', index, name='index'),
     path('contact/', contact, name='contact'),
     path('all/', get_item_all, name='get_item_all'),

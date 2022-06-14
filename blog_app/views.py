@@ -87,9 +87,32 @@ def add_item(request):
     return render(request, 'blog_app/add_item.html', {'form': form, 'menu': menu, 'msg': msg})
 
 
+def setcookie(request):
+    html = HttpResponse("boo")
+    html.set_cookie('visit', 1, max_age=None)
+    return html
+
 def index(request):
     menu = Category.objects.all()
-    return render(request, 'blog_app/welcome.html',{'menu': menu})
+    # cookie
+    if request.COOKIES.get('visit') is not None:
+        visit = int(request.COOKIES.get('visit')) + 1
+        response = render(request, 'blog_app/welcome.html', {'menu': menu, 'visit': visit})
+        response.set_cookie(key='visit', value=visit)
+        if visit > 10:
+            response.delete_cookie(key='visit')
+    else:
+        response = render(request, 'blog_app/welcome.html',{'menu': menu, 'visit': 1})
+        response.set_cookie(key='visit', value=1)
+
+    return response
+
+    #### session
+    #visit = request.session.get('visit',0)+1
+    #request.session['visit'] = visit
+    #if visit > 10:
+    #    del(request.session['visit'])
+    #return render(request, 'blog_app/welcome.html',{'menu': menu, 'visit':visit})
 
 
 def contact(request):
@@ -231,7 +254,8 @@ def adm_get_group(request):
     group_lst = Group.objects.all()
     return render(request, 'blog_app/adm_get_group.html', {'group_lst': group_lst})
 
-
+@login_required
+@permission_required('auth.group.can_change_group',raise_exception=True)
 def adm_compound_group(request, id):
     group = Group.objects.get(id=id)
     user_dellst = list()
